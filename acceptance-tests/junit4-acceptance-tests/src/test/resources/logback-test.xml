@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <timestamp key="byDay" datePattern="yyyyMMdd'T'HHmmss"/>
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File>target/logback/logback_output-${byDay}.log</File>
+        <encoder>
+            <pattern>[%highlight(%-5level)] [%X{runnerId}] %d{HH:mm:ss.SSS} [TestCaseId:%X{testCaseId}] [Scenario:
+                %X{scenarioName}] %cyan(%logger{15}) - %msg%n%rEx
+            </pattern>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%highlight(%-5level)] [%X{runnerId}] %d{HH:mm:ss.SSS} %green([TestCaseId:%X{testCaseId}])
+                [Scenario: %X{scenarioName}] %cyan(%logger{15}) - %msg%n%rEx
+            </pattern>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+    </appender>
+
+    <appender name="CSV" class="ch.qos.logback.core.FileAppender">
+        <File>target/logback/perfData-${byDay}.csv</File>
+        <Append>true</Append>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>return message.contains("Execution_Time");</expression>
+            </evaluator>
+            <OnMismatch>DENY</OnMismatch>
+            <OnMatch>NEUTRAL</OnMatch>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS};%msg%n</pattern>
+            <immediateFlush>true</immediateFlush>
+        </encoder>
+    </appender>
+
+    <logger name="org.example_project.qa.common" level="DEBUG"/>
+
+    <root level="WARN">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="CSV"/>
+    </root>
+</configuration>
