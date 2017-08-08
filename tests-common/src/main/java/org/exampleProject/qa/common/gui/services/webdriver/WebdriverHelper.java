@@ -15,6 +15,7 @@
 */
 package org.exampleProject.qa.common.gui.services.webdriver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.exampleProject.qa.common.gui.services.attachments.providers.AttachmentsProvider;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -35,6 +36,7 @@ import static java.lang.String.valueOf;
 
 @Component
 @Lazy
+@Slf4j
 public class WebdriverHelper {
     @Value("${webdriver.explicit.timeout:30000}")
     private int timeout;
@@ -47,7 +49,6 @@ public class WebdriverHelper {
 
 
     private static final String LOG_EXECUTION_TIME = "{} Execution_Time(ms):; {}; Page_URL:; {};";
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
 
     /**
      * JavaScript code to check if all the ajax requests completed
@@ -90,7 +91,7 @@ public class WebdriverHelper {
             wait.until(isAnimated);
             driver.manage().timeouts().setScriptTimeout(timeout, TimeUnit.MILLISECONDS);
         } finally {
-            LOG.info(LOG_EXECUTION_TIME, "Wait_For_Page_Update", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Wait_For_Page_Update", getExecutionTime(startTime), driver.getCurrentUrl());
         }
     }
 
@@ -104,7 +105,7 @@ public class WebdriverHelper {
         } catch (Exception e) {
             attachmentProvider.attachScreenshot("Error");
         }finally {
-            LOG.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
         }
     }
 
@@ -119,7 +120,7 @@ public class WebdriverHelper {
         } catch (Exception e) {
             attachmentProvider.attachScreenshot("Error");
         }finally {
-            LOG.info(LOG_EXECUTION_TIME, "Send_Keys", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Send_Keys", getExecutionTime(startTime), driver.getCurrentUrl());
         }
     }
 
@@ -146,7 +147,7 @@ public class WebdriverHelper {
         } catch (Exception e) {
             attachmentProvider.attachScreenshot("Error");
         }finally {
-            LOG.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
         }
     }
 
@@ -161,7 +162,7 @@ public class WebdriverHelper {
         } catch (Exception e) {
             attachmentProvider.attachScreenshot("Error");
         }finally {
-            LOG.info(LOG_EXECUTION_TIME, "get_Text", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "get_Text", getExecutionTime(startTime), driver.getCurrentUrl());
         }
         return text;
     }
@@ -176,11 +177,11 @@ public class WebdriverHelper {
             text = element.getText();
             waitForPageUpdated();
         } catch (NoSuchElementException e) {
-            LOG.error("Could not find elements with locator: {}.", locator);
+            log.error("Could not find elements with locator: {}.", locator);
             attachmentProvider.attachScreenshot("NoSuchElementException");
             throw e;
         }finally {
-            LOG.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Click", getExecutionTime(startTime), driver.getCurrentUrl());
         }
         return text;
     }
@@ -198,7 +199,7 @@ public class WebdriverHelper {
         try {
             new WebDriverWait(driver.getWrappedDriver(), timeout / 4000).until(ExpectedConditions.elementToBeClickable(element));
         } finally {
-            LOG.info(LOG_EXECUTION_TIME, "Wait_For_Element_To_Be_Clickable", getExecutionTime(startTime), driver.getCurrentUrl());
+            log.info(LOG_EXECUTION_TIME, "Wait_For_Element_To_Be_Clickable", getExecutionTime(startTime), driver.getCurrentUrl());
         }
     }
 
@@ -214,7 +215,7 @@ public class WebdriverHelper {
             isDisplayed = webElement.isDisplayed();
         } catch (NoSuchElementException ex) {
             isDisplayed = false;
-            LOG.warn("Web Element is not displayed. Locator is {}", locator.toString());
+            log.warn("Web Element is not displayed. Locator is {}", locator.toString());
         } finally {
             driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.MILLISECONDS);
         }
